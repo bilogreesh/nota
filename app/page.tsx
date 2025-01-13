@@ -61,14 +61,12 @@ export default function App() {
           Review next steps of this tutorial.
         </a>
       </div>
-      
       <FileUploader
-        accessLevel="public"
-        acceptedFileTypes={['image/*']}
-        maxFileCount={5}
-        isResumable={true}
-        showResults={true}
-        />
+      acceptedFileTypes={['*/*']}
+      path="public/"
+      maxFileCount={1}
+      isResumable
+    />
     </main>
   );
 }
