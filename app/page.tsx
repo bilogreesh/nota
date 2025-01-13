@@ -91,7 +91,7 @@ export default function App() {
         if (result?.key) {  // Add null check here
           const url = await getFileUrl(result.key);
           if (url) {
-            setUploadedUrls(prev => [...prev, { key: result.key as string, url: url as string }]);          }
+            setUploadedUrls(prev => [...prev, { key: result.key as string, url: url.toString()}]);          }
         }
       }}
     />
