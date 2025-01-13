@@ -38,7 +38,7 @@ export default function App() {
       const result = await getUrl({
         key: key,
         options: {
-          accessLevel: 'public',
+          accessLevel: 'guest',
           validateObjectExistence: true
         }
       });
