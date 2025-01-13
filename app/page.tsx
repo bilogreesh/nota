@@ -8,13 +8,21 @@ import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import { useAuthenticator } from "@aws-amplify/ui-react";
+import { uploadData } from 'aws-amplify/storage';
+import React from "react";
+import { FileUploader } from '@aws-amplify/ui-react-storage';
+import '@aws-amplify/ui-react/styles.css';
 Amplify.configure(outputs);
 
 const client = generateClient<Schema>();
 
 export default function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [file, setFile] = React.useState();
 
+  const handleChange = (event: any) => {
+    setFile(event.target.files[0]);
+  };
   function listTodos() {
     client.models.Todo.observeQuery().subscribe({
       next: (data) => setTodos([...data.items]),
@@ -53,6 +61,14 @@ export default function App() {
           Review next steps of this tutorial.
         </a>
       </div>
+      
+      <FileUploader
+        accessLevel="public"
+        acceptedFileTypes={['image/*']}
+        maxFileCount={5}
+        isResumable={true}
+        showResults={true}
+        />
     </main>
   );
 }
