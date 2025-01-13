@@ -12,6 +12,9 @@ import { uploadData } from 'aws-amplify/storage';
 import React from "react";
 import { FileUploader } from '@aws-amplify/ui-react-storage';
 import '@aws-amplify/ui-react/styles.css';
+
+import { getUrl } from 'aws-amplify/storage';
+
 Amplify.configure(outputs);
 
 const client = generateClient<Schema>();
@@ -19,6 +22,8 @@ const client = generateClient<Schema>();
 export default function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
   const [file, setFile] = React.useState();
+  const [uploadedUrls, setUploadedUrls] = useState<Array<{ key: string, url: string }>>([]);
+  const [error, setError] = useState<string>('');
 
   const handleChange = (event: any) => {
     setFile(event.target.files[0]);
@@ -28,6 +33,22 @@ export default function App() {
       next: (data) => setTodos([...data.items]),
     });
   }
+  const getFileUrl = async (key: string) => {
+    try {
+      const result = await getUrl({
+        key: key,
+        options: {
+          accessLevel: 'public',
+          validateObjectExistence: true
+        }
+      });
+      return result.url;
+    } catch (error) {
+      console.error('Error getting file URL:', error);
+      setError('Failed to get file URL');
+      return null;
+    }
+  };
     
   function deleteTodo(id: string) {
     client.models.Todo.delete({ id })
@@ -65,7 +86,14 @@ export default function App() {
       acceptedFileTypes={['*/*']}
       path="public/"
       maxFileCount={1}
-      isResumable
+      isResumable={true}
+      onUploadSuccess={async (result) => {
+        if (result?.key) {  // Add null check here
+          const url = await getFileUrl(result.key);
+          if (url) {
+            setUploadedUrls(prev => [...prev, { key: result.key as string, url: url as string }]);          }
+        }
+      }}
     />
     </main>
   );
