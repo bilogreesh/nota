@@ -1,7 +1,7 @@
 import { defineStorage } from '@aws-amplify/backend';
 
 export const storage = defineStorage({
-  name: 'amplifyTeamDrive',
+  name: 'documentStore',
   access: (allow) => ({
     'profile-pictures/{entity_id}/*': [
       allow.guest.to(['read']),

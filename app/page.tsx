@@ -33,22 +33,15 @@ export default function App() {
       next: (data) => setTodos([...data.items]),
     });
   }
-  const getFileUrl = async (key: string) => {
-    try {
-      const result = await getUrl({
-        key: key,
-        options: {
-          accessLevel: 'guest',
-          validateObjectExistence: true
-        }
-      });
-      return result.url;
-    } catch (error) {
-      console.error('Error getting file URL:', error);
-      setError('Failed to get file URL');
-      return null;
-    }
-  };
+  const getFileUrl = async (key: string) => await getUrl({
+    path: 'picture-submissions',
+    // Alternatively, path: ({identityId}) => `protected/${identityId}/album/2024/1.jpg`
+    options: {
+      validateObjectExistence: false,  // Check if object exists before creating a URL
+      expiresIn: 20 // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
+      
+    },
+  });
     
   function deleteTodo(id: string) {
     client.models.Todo.delete({ id })
@@ -84,7 +77,7 @@ export default function App() {
       </div>
       <FileUploader
       acceptedFileTypes={['*/*']}
-      path="public/"
+      path="picture-submissions/"
       maxFileCount={1}
       isResumable={true}
       onUploadSuccess={async (result) => {
