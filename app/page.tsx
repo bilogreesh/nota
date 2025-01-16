@@ -12,6 +12,7 @@ import { uploadData } from 'aws-amplify/storage';
 import React from "react";
 import { FileUploader } from '@aws-amplify/ui-react-storage';
 import '@aws-amplify/ui-react/styles.css';
+import { getCurrentUser } from 'aws-amplify/auth';
 
 import { getUrl } from 'aws-amplify/storage';
 
@@ -24,7 +25,7 @@ export default function App() {
   const [file, setFile] = React.useState();
   const [uploadedUrls, setUploadedUrls] = useState<Array<{ key: string, url: string }>>([]);
   const [error, setError] = useState<string>('');
-
+  const { user, signOut } = useAuthenticator((context) => [context.user]);
   const handleChange = (event: any) => {
     setFile(event.target.files[0]);
   };
@@ -34,7 +35,7 @@ export default function App() {
     });
   }
   const getFileUrl = async (key: string) => await getUrl({
-    path: 'picture-submissions',
+    path: 'documents/',
     // Alternatively, path: ({identityId}) => `protected/${identityId}/album/2024/1.jpg`
     options: {
       validateObjectExistence: false,  // Check if object exists before creating a URL
@@ -47,7 +48,6 @@ export default function App() {
     client.models.Todo.delete({ id })
   }
     
-  const { signOut } = useAuthenticator();
   useEffect(() => {
     listTodos();
   }, []);
@@ -77,8 +77,7 @@ export default function App() {
       </div>
       <FileUploader
       acceptedFileTypes={['*/*']}
-      path="picture-submissions/"
-      accessLevel="private"
+      path={`documents/${user.userId}/*`}
       maxFileCount={1}
       isResumable={true}
       onUploadSuccess={async (result) => {
