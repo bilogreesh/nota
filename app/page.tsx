@@ -78,6 +78,7 @@ export default function App() {
       <FileUploader
       acceptedFileTypes={['*/*']}
       path="picture-submissions/"
+      accessLevel="private"
       maxFileCount={1}
       isResumable={true}
       onUploadSuccess={async (result) => {
