@@ -80,6 +80,9 @@ export default function App() {
       path={`documents/${user.userId}/*`}
       maxFileCount={1}
       isResumable={true}
+      onUploadError={() => {
+        console.log(`documents/${user.userId}/*`);
+      }}
       onUploadSuccess={async (result) => {
         if (result?.key) {  // Add null check here
           const url = await getFileUrl(result.key);
