@@ -13,7 +13,7 @@ import React from "react";
 import { FileUploader } from '@aws-amplify/ui-react-storage';
 import '@aws-amplify/ui-react/styles.css';
 import { getCurrentUser } from 'aws-amplify/auth';
-
+import { fetchAuthSession } from 'aws-amplify/auth'
 import { getUrl } from 'aws-amplify/storage';
 
 Amplify.configure(outputs);
@@ -26,6 +26,7 @@ export default function App() {
   const [uploadedUrls, setUploadedUrls] = useState<Array<{ key: string, url: string }>>([]);
   const [error, setError] = useState<string>('');
   const { user, signOut } = useAuthenticator((context) => [context.user]);
+  const [identityId, setIdentityId] = useState<string>('');
   const handleChange = (event: any) => {
     setFile(event.target.files[0]);
   };
@@ -49,6 +50,11 @@ export default function App() {
   }
     
   useEffect(() => {
+    async function getIdentityId() {
+      const session:any = await fetchAuthSession();
+      setIdentityId(session.identityId);
+    }
+    getIdentityId();
     listTodos();
   }, []);
 
@@ -77,11 +83,11 @@ export default function App() {
       </div>
       <FileUploader
       acceptedFileTypes={['*/*']}
-      path={`documents/{entity_id}/`}
+      path={`documents/${identityId}/*`}
       maxFileCount={1}
       isResumable={true}
       onUploadError={() => {
-        console.log(`documents/${user.userId}/*`);
+        console.log(`documents/${identityId}/*`);
       }}
       onUploadSuccess={async (result) => {
         if (result?.key) {  // Add null check here
