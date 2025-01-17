@@ -77,7 +77,7 @@ export default function App() {
       </div>
       <FileUploader
       acceptedFileTypes={['*/*']}
-      path={`documents/${user.userId}/*`}
+      path={`documents/{entity_id}/*`}
       maxFileCount={1}
       isResumable={true}
       onUploadError={() => {
